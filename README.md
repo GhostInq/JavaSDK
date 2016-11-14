@@ -185,6 +185,7 @@ Relative paths to the images/folders in some directory can be listed using listI
 
 ## License
 
+Pixpie Java SDK is available under the Apache 2.0 license.
 
     Copyright (C) 2015,2016 Pixpie
 
@@ -199,3 +200,4 @@ Relative paths to the images/folders in some directory can be listed using listI
     WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
     See the License for the specific language governing permissions and
     limitations under the License.
+
