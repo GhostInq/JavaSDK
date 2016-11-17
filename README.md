@@ -1,4 +1,5 @@
 # Pixpie Java SDK #
+[![Build Status](https://travis-ci.org/PixpieCo/JavaSDK.svg?branch=master)](https://travis-ci.org/PixpieCo/JavaSDK)
 
 https://www.pixpie.co
 
