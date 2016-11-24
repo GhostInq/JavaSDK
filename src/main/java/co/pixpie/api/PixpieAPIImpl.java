@@ -45,7 +45,7 @@ public class PixpieAPIImpl implements PixpieAPI {
 
     private final Logger logger = LoggerFactory.getLogger(PixpieAPIImpl.class);
     private static final int JAVA_SERVER_SDK_TYPE_ID = 1;
-    private static final String JAVA_SDK_VERSION = "1.0.0";
+    private static final String JAVA_SDK_VERSION = "1.0.1";
 
     ObjectMapper mapper = new ObjectMapper();
 
