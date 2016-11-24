@@ -1,4 +1,5 @@
-# Java SDK
+# Pixpie Java SDK #
+[![Build Status](https://travis-ci.org/PixpieCo/JavaSDK.svg?branch=master)](https://travis-ci.org/PixpieCo/JavaSDK)
 
 https://www.pixpie.co
 
@@ -18,7 +19,7 @@ Check last released version on [Bintray](https://dl.bintray.com/accord/pixpie-ja
 
 Update your Maven/Gradle files:
 
-``` maven
+``` gradle
 <repositories>
     <repository>
         <id>bintray</id>
@@ -65,12 +66,19 @@ After [creation of new application](https://pixpie.atlassian.net/wiki/display/DO
 use Bundle ID (reverse url id) and Secret key in static authenticate method.
 
 ``` java
-
+    
+    PixpieAPI pixpieAPI = null;    
+    try {
+        pixpieAPI = new PixpieAPIImpl(
+            "com.example.SomeApp", // Bundle ID (reverse url id), required
+            "41bc32fde0d3ed6927b6f54sdc", // Secret key, required
+            "yuuRiesahs3niet7thac" // fixed value for cloud usage, required
+        );
+    } catch (PixpieAuthenticationException e) {
+        e.printStackTrace();
+    }
+    
 ``` 
-
-### Get remote (third party) images ###
-
-Approaches how to manipulate and optimize images that are available by the direct link.
 
 ### Upload ###
 
@@ -81,39 +89,104 @@ There are a few ways how to upload local images to Pixpie cloud.
 
 ``` java
 
+    boolean uploadImage(@NonNull byte[] image or @NonNull InputStream imageStream                                
+                               @NonNull String contentType,
+                               @NonNull String encodedImageName, 
+                               @NonNull String innerPath, 
+                               boolean async)        
+                               
+    boolean uploadedAsync = pixpieAPI.uploadImage(IOUtils.toByteArray(new URL("http://i.imgur.com/ByDKcYg.jpg")),
+                "jpeg", "dog.jpg", "/async/inner_folder", true);
+    
+    boolean uploadedSync = api.uploadImage(IOUtils.toByteArray(new URL("http://i.imgur.com/ByDKcYg.jpg")),
+                "jpeg", "dog.jpg", "/sync/inner_folder", false);
+
 ```
 
-- image - binary data 
+- image/imageStream - image binary data
 - contentType -  “image/png" or “image/jpeg”
 - encodedImageName - image name in Pixpie
 - innerPath - relative inner path where it will be saved in Pixpie cloud
-- async - true / false
+- async - respond as soon as server received image's body, or when it was fully saved
 
-### Get local (uploaded) images ###
+### Get remote (third party) and local (uploaded) images ###
 
-Behaviour of methods that provide possibility to show or get the urls of uploaded images is very similar to remote (third party images).
+Approach how to manipulate and get optimized image's url that are available by the direct link or is uploaded.
 
-To get the link:
 
 ``` java
+    
+    // for remote image
+    String originalRemoteImageUrl = "http://i.imgur.com/ByDKcYg.jpg";            
 
-  String relativePathToImageInPixpieCloud = “/path/to/image/some-image-1.jpg”
-  
+    final String remoteImageUrl = pixpieAPI.getRemoteImageUrl(originalRemoteImageUrl, new ImageTransformation()
+                .withWidth(600)
+                .withCropAlignType(CropAlignType.TOP));
+    
+    // should produce 
+    // http://pixpie-demo.azureedge.net/com.example.SomeApp/remote/def/w_600,c_top/http://i.imgur.com/ByDKcYg.jpg
+    
+
+    // for uploaded local image    
+    String relativePathToImageInPixpieCloud = “/sync/inner_folder/dog.jpg” 
+
+    final String localImageUrl = pixpieAPI.getImageUrl(relativePathToImageInPixpieCloud, new ImageTransformation()
+                .withFormat(ImageFormat.WEBP)
+                .withHeight(500)
+                .withWidth(600)
+                .withQuality(80));
+    
+    // should produce 
+    // http://pixpie-demo.azureedge.net/com.example.SomeApp/local/webp/w_600,h_500,q_80/sync/inner_folder/dog.jpg
   
 ```
 
 ### Delete ###
 
-Uploaded local images could be simply deleted from Pixpie cloud by calling the delete method.
+Uploaded local images (folders) could be simply deleted from Pixpie cloud by calling the delete method.
+
+
+``` java
+    
+    boolean deleteItems(String innerPath, List<String> images, List<String> folders) throws PixpieEmptyDeleteBatchException
+    
+    // Delete created/uploaded items
+    List<String> foldersToDelete = new ArrayList<>();
+    foldersToDelete.add("sync");
+    foldersToDelete.add("async");
+
+    try {
+        b = pixpieAPI.deleteItems("/", null, foldersToDelete);
+    } catch (PixpieEmptyDeleteBatchException e) {
+        System.out.println("Delete failed " + e.getMessage());
+    }
+    
+```    
+
+- innerPath - relative path to folder in Pixpie cloud
+- images - list of images
+- folders - list of folders
+
+### List items ###
+
+Relative paths to the images/folders in some directory can be listed using listItems method.
 
 
 ``` java
 
+    ListItemsBean listItems(@NonNull String innerPath)
 
-```    
+
+    final ListItemsBean listItemsBean = pixpieAPI.listItems("/");
+
+    final List<String> folders = listItemsBean.getFolders();
+    final List<String> images = listItemsBean.getImages();
+
+``` 
 
 ## License
 
+Pixpie Java SDK is available under the Apache 2.0 license.
 
     Copyright (C) 2015,2016 Pixpie
 
@@ -128,3 +201,4 @@ Uploaded local images could be simply deleted from Pixpie cloud by calling the d
     WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
     See the License for the specific language governing permissions and
     limitations under the License.
+
