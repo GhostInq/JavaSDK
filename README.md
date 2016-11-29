@@ -1,5 +1,6 @@
 # Pixpie Java SDK #
 [![Build Status](https://travis-ci.org/PixpieCo/JavaSDK.svg?branch=master)](https://travis-ci.org/PixpieCo/JavaSDK)
+[![Analytics](https://ga-beacon.appspot.com/UA-88187046-1/pixpie-github/JavaSDK?pixel)](https://github.com/PixpieCo/JavaSDK)
 
 https://www.pixpie.co
 
